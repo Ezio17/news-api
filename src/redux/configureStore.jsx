@@ -4,7 +4,9 @@ import thunk from 'redux-thunk'
 import promise from 'redux-promise-middleware'
 
 let items = {
-  news: []
+  news: [],
+  title: '',
+  body: '',
 }
 
 const rootReducer = (state = items, action) => {
@@ -12,15 +14,24 @@ const rootReducer = (state = items, action) => {
 
     case 'CHANGE_NEWS':
       return {
+        ...state,
         news: action.payload,
       }
+
+    case 'SET_INPUT': {
+      return {
+        ...state,
+        title: action.payload.title,
+        body: action.payload.body,
+      }
+    }
 
     default:
       return state
   }
 };
 
-const middleware = applyMiddleware(promise, thunk)
+const middleware = applyMiddleware(promise, thunk, logger)
 const configureStore = () => {
   const store = createStore(
     rootReducer,

@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux';
 
 class ModalEditNews extends React.Component {
   constructor(props) {
@@ -7,10 +8,12 @@ class ModalEditNews extends React.Component {
     this.state = {
       valueTextArea: '',
       valueInput: '',
+      body: '',
     };
 
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleChangeTextArea = this.handleChangeTextArea.bind(this);
+    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   handleChangeInput(event) {
@@ -19,6 +22,39 @@ class ModalEditNews extends React.Component {
 
   handleChangeTextArea(event) {
     this.setState({ valueTextArea: event.target.value });
+  }
+
+  handleClickOutside(e) {
+    if (e.target.id !== 'ModalEdit') {
+      return
+    }
+
+    this.setState({
+      valueTextArea: this.state.valueTextArea,
+      valueInput: this.state.title,
+    })
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.body !== prevState.body
+      || nextProps.title !== prevState.title) {
+      return {
+        valueTextArea: nextProps.body,
+        valueInput: nextProps.title,
+        body: nextProps.body,
+        title: nextProps.title,
+      }
+    } else {
+      return null
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
   }
 
   render() {
@@ -58,15 +94,22 @@ class ModalEditNews extends React.Component {
                   </form>
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button"
+                    className="btn btn-secondary"
+                    data-dismiss="modal"
+                    onClick={() => this.setState({
+                      valueTextArea: this.state.body,
+                      valueInput: this.state.title,
+                    })}
+                  >Close</button>
                   <button
                     type="button"
                     className="btn btn-primary"
                     data-dismiss="modal"
                     onClick={() => {
                       this.setState({
-                        valueInput: '',
-                        valueTextArea: '',
+                        valueTextArea: this.state.body,
+                        valueInput: this.state.title,
                       })
                       return this.props.editNews(this.state.valueInput, this.state.valueTextArea);
                     }
@@ -82,4 +125,9 @@ class ModalEditNews extends React.Component {
   }
 }
 
-export default ModalEditNews
+const mapStateToProps = (state) => ({
+  title: state.title,
+  body: state.body,
+});
+
+export default connect(mapStateToProps)(ModalEditNews);

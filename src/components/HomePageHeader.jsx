@@ -11,12 +11,6 @@ const HomePageHeader = ({ mostCommented, sortNewNews, newNews, mostCommentedFunc
         <li className="nav-item">
           <p
             className="nav-link sortedItems"
-            onClick={mostCommentedFunc}
-          >{mostCommented}</p>
-        </li>
-        <li className="nav-item">
-          <p
-            className="nav-link sortedItems"
             onClick={popularNews}
           >{popularNewsText}</p>
         </li>

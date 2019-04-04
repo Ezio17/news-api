@@ -15,7 +15,7 @@ class HomePage extends React.Component {
       sortNewNews: 'New news',
       mostCommented: 'Most commented',
       popularNews: 'Popular news',
-      editItem: {},
+      editItem: null,
       isLoading: true,
     }
 
@@ -55,28 +55,6 @@ class HomePage extends React.Component {
 
       this.setState({
         popularNews,
-      })
-
-      let items = JSON.stringify(copyNews);
-      localStorage.setItem('news', items)
-
-      this.props.changeNews(JSON.parse(localStorage.getItem("news")))
-    }
-
-    this.mostCommented = () => {
-      const copyNews = [...this.props.items];
-      let mostCommented = '';
-
-      if (this.state.mostCommented === 'Most commented') {
-        copyNews.sort((a, b) => a.id - b.id);
-        mostCommented = 'The least commented'
-      } else if (this.state.mostCommented === 'The least commented') {
-        copyNews.sort((a, b) => b.id - a.id);
-        mostCommented = 'Most commented'
-      }
-
-      this.setState({
-        mostCommented,
       })
 
       let items = JSON.stringify(copyNews);
@@ -138,12 +116,17 @@ class HomePage extends React.Component {
       const { editItem } = this.state
       const { items } = this.props
 
+      if (editItem.title === title && editItem.body === body) {
+        return
+      }
+
       if (title === '') {
         title = editItem.title;
       }
       if (body === '') {
         body = editItem.body
       }
+      console.log(editItem.title, '==========' + title)
 
       for (let i = 0; i < items.length; i++) {
         if (items[i].id === editItem.id) {
@@ -153,6 +136,8 @@ class HomePage extends React.Component {
             body
           }
 
+
+
           let newItems = JSON.stringify(items);
           localStorage.setItem('news', newItems)
           this.props.changeNews(JSON.parse(localStorage.getItem("news")))
@@ -161,7 +146,9 @@ class HomePage extends React.Component {
     }
 
     this.getPost = (item) => {
-      return this.setState({
+      const { setInput } = this.props
+      setInput(item.title, item.body)
+      this.setState({
         editItem: item,
       })
     }
@@ -263,6 +250,9 @@ const mapDispatchToProps = dispatch => {
     changeNews(news) {
       dispatch({ type: 'CHANGE_NEWS', payload: news })
     },
+    setInput(title, body) {
+      dispatch({ type: 'SET_INPUT', payload: { title, body } })
+    }
   }
 }
 
