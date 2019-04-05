@@ -8,10 +8,10 @@ class Post extends React.Component {
     super(props)
 
     this.state = {
-      post: {},
       postComment: [],
       hidden: true,
       authorPost: '',
+      news: '',
     }
 
     this.hideComments = async () => {
@@ -28,17 +28,19 @@ class Post extends React.Component {
   }
 
   async componentDidMount() {
-    const post = await Fetch('https://jsonplaceholder.typicode.com' + this.props.match.url)
-    const authorPost = await Fetch('https://jsonplaceholder.typicode.com/users/' + post.userId)
+    const urlPostId = this.props.location.pathname.match(/\d+/g).join('')
+    const localStorageUsers = JSON.parse(localStorage.getItem("news"))
+    const user = localStorageUsers.filter(user => user.id === +urlPostId)
+    const authorPost = await Fetch('https://jsonplaceholder.typicode.com/users/' + user[0].userId)
 
     this.setState({
-      post,
       authorPost: authorPost.name,
+      news: user[0]
     })
   }
 
   render() {
-    const { post, postComment, hidden, authorPost } = this.state
+    const { postComment, hidden, authorPost, news } = this.state
 
     return (
       <div className="container">
@@ -49,12 +51,14 @@ class Post extends React.Component {
             </Link>
           </div>
           <h1 className="col-12 text-center post__title">Author:
-            <Link to={'/users/' + `${post.userId}`} className="authorPost"> {authorPost}</Link>
-          </h1>
+          {authorPost === undefined ? ' Anonym' :
+              <Link to={`/users/${news.userId}`} className="authorPost"> {authorPost} </Link>
+            }</h1>
+
           <div className="card col-12 col-md-8 post">
             <div className="card-body">
-              <h3 className="text-center">{post.title}</h3>
-              <p className="text-center">{post.body}</p>
+              <h3 className="text-center">{news.title}</h3>
+              <p className="text-center">{news.body}</p>
               <div className="post__block-comment">
                 <p
                   className="post__comment"

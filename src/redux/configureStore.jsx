@@ -7,6 +7,7 @@ let items = {
   news: [],
   title: '',
   body: '',
+  author: '',
 }
 
 const rootReducer = (state = items, action) => {
@@ -23,6 +24,7 @@ const rootReducer = (state = items, action) => {
         ...state,
         title: action.payload.title,
         body: action.payload.body,
+        userId: action.payload.userId
       }
     }
 

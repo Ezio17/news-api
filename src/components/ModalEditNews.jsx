@@ -114,7 +114,7 @@ class ModalEditNews extends React.Component {
                       return this.props.editNews(this.state.valueInput, this.state.valueTextArea);
                     }
                     }
-                  >Edit message</button>
+                  >Edit news</button>
                 </div>
               </div>
             </div>

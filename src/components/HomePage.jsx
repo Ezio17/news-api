@@ -63,10 +63,10 @@ class HomePage extends React.Component {
       this.props.changeNews(JSON.parse(localStorage.getItem("news")))
     }
 
-    this.viewer = (id) => {
+    this.viewer = (item) => {
       let { items } = this.props
       for (let i = 0; i < items.length; i++) {
-        if (items[i].id === id) {
+        if (items[i].id === item.id) {
           items[i] = {
             ...items[i],
             viewer: items[i].viewer + 1
@@ -76,6 +76,7 @@ class HomePage extends React.Component {
           localStorage.setItem('news', newItems)
 
           this.props.changeNews(JSON.parse(localStorage.getItem("news")))
+          this.props.setInput(item.userId)
         }
       }
     }
@@ -135,9 +136,6 @@ class HomePage extends React.Component {
             title,
             body
           }
-
-
-
           let newItems = JSON.stringify(items);
           localStorage.setItem('news', newItems)
           this.props.changeNews(JSON.parse(localStorage.getItem("news")))
@@ -146,8 +144,6 @@ class HomePage extends React.Component {
     }
 
     this.getPost = (item) => {
-      const { setInput } = this.props
-      setInput(item.title, item.body)
       this.setState({
         editItem: item,
       })
@@ -212,7 +208,7 @@ class HomePage extends React.Component {
                     <div>
                       <Link
                         to={'posts/' + `${item.id}`}
-                        onClick={() => this.viewer(item.id)}
+                        onClick={() => this.viewer(item)}
                       >
                         <p className="btn btn-primary block_views">Read more...</p >
                       </Link>
@@ -250,8 +246,8 @@ const mapDispatchToProps = dispatch => {
     changeNews(news) {
       dispatch({ type: 'CHANGE_NEWS', payload: news })
     },
-    setInput(title, body) {
-      dispatch({ type: 'SET_INPUT', payload: { title, body } })
+    setInput(userId) {
+      dispatch({ type: 'SET_INPUT', payload: { userId } })
     }
   }
 }
