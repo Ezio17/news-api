@@ -1,11 +1,10 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 
 import Fetch from '../details/Fetch'
 import ModalAddNews from './ModalAddNews'
-import ModalEditNews from './ModalEditNews'
 import HomePageHeader from './HomePageHeader'
+import HomePageNews from './HomePageNews'
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -144,6 +143,8 @@ class HomePage extends React.Component {
     }
 
     this.getPost = (item) => {
+      const { setInput } = this.props
+      setInput(item.title, item.body)
       this.setState({
         editItem: item,
       })
@@ -198,39 +199,13 @@ class HomePage extends React.Component {
               mostCommentedFunc={this.mostCommented}
             />
             <ModalAddNews addNews={this.addNews} />
-            {items.map(item =>
-              <div className="offset-2 com-8 col-md-6 offset-md-0 col-lg-4 box block justify-content-center"
-                key={item.id}>
-                <div className="card">
-                  <div className="card-body">
-                    <h5 className="card-title text-center">{item.title}</h5>
-                    <p className="card-text">{item.body}</p>
-                    <div>
-                      <Link
-                        to={'posts/' + `${item.id}`}
-                        onClick={() => this.viewer(item)}
-                      >
-                        <p className="btn btn-primary block_views">Read more...</p >
-                      </Link>
-                      <p className="block_views offset-2">Views: {item.viewer}</p>
-                    </div>
-                  </div>
-                  <div className="row justify-content-center" >
-                    <p
-                      className="additional w-auto"
-                      data-toggle="modal"
-                      data-target="#ModalEdit"
-                      data-whatever="@mdo"
-                      onClick={() => this.getPost(item)}
-                    >Edit news</p>
-                    <p
-                      className="additional w-auto"
-                      onClick={() => this.deletePost(`${item.id}`)}
-                    >Delete news</p>
-                  </div>
-                </div>
-              </div>)}
-            <ModalEditNews editNews={this.editNews} />
+            <HomePageNews
+              items={items}
+              viewer={this.viewer}
+              deletePost={this.deletePost}
+              getPost={this.getPost}
+              editNews={this.editNews}
+            />
           </div>
         </div>
     )
@@ -246,8 +221,8 @@ const mapDispatchToProps = dispatch => {
     changeNews(news) {
       dispatch({ type: 'CHANGE_NEWS', payload: news })
     },
-    setInput(userId) {
-      dispatch({ type: 'SET_INPUT', payload: { userId } })
+    setInput(title, body) {
+      dispatch({ type: 'SET_INPUT', payload: { title, body } })
     }
   }
 }

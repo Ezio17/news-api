@@ -24,7 +24,6 @@ const rootReducer = (state = items, action) => {
         ...state,
         title: action.payload.title,
         body: action.payload.body,
-        userId: action.payload.userId
       }
     }
 
